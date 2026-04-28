@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "producto")
-@JsonPropertyOrder({"id", "producto", "descripcion", "precio", "color", "talla", "categoria", "estado"})
+@JsonPropertyOrder({"id", "producto", "descripcion", "precio", "stock", "color", "talla", "categoria", "estado"})
 public class producto {
 
     @Id
@@ -38,7 +38,7 @@ public class producto {
     private categoria categoria;
 
     @Column(nullable = false)
-    private Boolean estado;
+    private Boolean estado = true;
 
     public producto() { }
 

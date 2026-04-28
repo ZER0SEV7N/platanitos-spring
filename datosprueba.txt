@@ -1,0 +1,21 @@
+{
+    
+}
+
+
+{
+  "producto": "Sandalias Crocs Zuecos Mujer Baya",
+  "descripcion": "Sumérgete en la elegancia y comodidad con los Zuecos Mujer Baya Platform Clog W de Crocs.",
+    "precio": "188.10",
+    "stock": 60,
+    "color": {
+      "id": 2
+    },
+    "talla": {
+        "id": 3
+    },
+    "categoria": {
+        "id": 1
+    },
+    "estado": true
+}

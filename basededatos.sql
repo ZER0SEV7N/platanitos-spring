@@ -38,6 +38,13 @@ create table producto (
     estado boolean default true
 );
 
+create table carrito (
+    id int auto_increment primary key,
+    idusuario int references usuario(id),
+    idproducto int references producto(id),
+    cantidad int not null
+);
+
 insert color values 
 (null, 'rojo'),
 (null, 'azul'),

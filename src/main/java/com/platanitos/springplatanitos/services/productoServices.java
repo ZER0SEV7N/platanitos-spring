@@ -16,9 +16,7 @@ public class productoServices {
 
     //Metodo para traer todos los productos que esten activos
     public List<producto> TodosLosProductos() {
-        return productoRepository.findAll().stream()
-                .filter(producto::getEstado)
-                .collect(Collectors.toList());
+        return productoRepository.findAllByEstadoTrue();
     }
 
     //Metodo para traer un producto por su id
@@ -41,6 +39,7 @@ public class productoServices {
             producto.setProducto(productoActualizado.getProducto());
             producto.setDescripcion(productoActualizado.getDescripcion());
             producto.setPrecio(productoActualizado.getPrecio());
+            producto.setStock(productoActualizado.getStock());
             producto.setColor(productoActualizado.getColor());
             producto.setTalla(productoActualizado.getTalla());
             producto.setCategoria(productoActualizado.getCategoria());
@@ -68,18 +67,9 @@ public class productoServices {
         }
     }
 
-    //Metodo para contar productos por categoria
-    public Integer ContarProductosPorCategoria(String categoria){
-        return productoRepository.countByCategoria(categoria);
+    //Metodo para filtrar productos por categoria
+    public List<producto> FiltrarProductosPorCategoria(String categoria){
+        return productoRepository.findByCategoria_Categoria(categoria);
     }
 
-    //Metodo para contar productos por talla
-    public Integer ContarProductosPorTalla(String talla){
-        return productoRepository.countByTalla(talla);
-    }
-
-    //Metodo para contar productos por color
-    public Integer ContarProductosPorColor(String color){
-        return productoRepository.countByColor(color);
-    }
 }

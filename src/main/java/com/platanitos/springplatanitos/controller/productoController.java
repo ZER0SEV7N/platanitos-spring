@@ -83,10 +83,15 @@ public class productoController {
         return ResponseEntity.status(200).body(new response<>(true, mensaje, null));
     }
 
-    //Metodo para contar productos por categoria
-    @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<response<Integer>> contarProductosPorCategoria(@PathVariable String categoria){
-        Integer count = productoServices.ContarProductosPorCategoria(categoria);
-        return ResponseEntity.status(200).body(new response<>(true, "Cantidad de productos por categoria", count));
+    //Metodo para filtrar productos por categoria
+    @GetMapping("/filtrar/{categoria}")
+    public ResponseEntity<response<List<producto>>> filtrarProductosPorCategoria(@PathVariable String categoria){
+        List<producto> productos = productoServices.FiltrarProductosPorCategoria(categoria);
+
+        if(productos.isEmpty()) 
+            return ResponseEntity.status(404).body(new response<>(false, "No se encontraron productos para la categoria: " + categoria, null));
+        
+
+        return ResponseEntity.status(200).body(new response<>(true, "Productos encontrados para la categoria: " + categoria, productos));
     }
 }
