@@ -15,10 +15,10 @@ public class carrito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "idproducto", nullable = false)
     private Long idProducto;
 
-    @Column(nullable = false)
+    @Column(name = "idusuario", nullable = false)
     private Long idUsuario;
 
     @Column(nullable = false, columnDefinition = "integer default 1")
@@ -34,8 +34,8 @@ public class carrito {
         this.id = id;
     }
 
-    public Long getIdProducto() {
-        return idProducto;
+    public Long getIdProducto() { 
+        return idProducto; 
     }
 
     public void setIdProducto(Long idProducto) {
