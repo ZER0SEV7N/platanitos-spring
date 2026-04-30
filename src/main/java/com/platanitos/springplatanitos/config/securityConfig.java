@@ -10,6 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+//Configuration de seguridad para la aplicación
 @Configuration
 public class securityConfig {
 
@@ -28,8 +29,10 @@ public class securityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()  
+                        //Rutas públicas
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()   
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()  
+                        //Rutas protegidas
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").authenticated()  
                         .requestMatchers(HttpMethod.POST, "/api/productos").authenticated()
                         .requestMatchers("/api/carrito/**").authenticated()  

@@ -13,64 +13,64 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.platanitos.springplatanitos.models.carrito;
-import com.platanitos.springplatanitos.models.payload.response;
-import com.platanitos.springplatanitos.services.carritoServices;
+import com.platanitos.springplatanitos.models.Carrito;
+import com.platanitos.springplatanitos.models.payload.Response;
+import com.platanitos.springplatanitos.services.carrito.CarritoServices;
 
 @RestController
 @RequestMapping("/api/carrito")
 public class carritoController {
 
     @Autowired
-    private carritoServices carritoServices;
+    private CarritoServices carritoServices;
 
     @GetMapping("/{idUsuario}")
-    public ResponseEntity<response<List<carrito>>> obtenerCarrito(@PathVariable Long idUsuario) {
-        List<carrito> miCarrito = carritoServices.ObtenerCarritoPorUsuario(idUsuario);
+    public ResponseEntity<Response<List<Carrito>>> obtenerCarrito(@PathVariable Long idUsuario) {
+        List<Carrito> miCarrito = carritoServices.ObtenerCarritoPorUsuario(idUsuario);
         
         if (miCarrito.isEmpty()) 
-            return ResponseEntity.status(404).body(new response<>(false, "El carrito está vacío", null));
+            return ResponseEntity.status(404).body(new Response<>(false, "El carrito está vacío", null));
         
-        return ResponseEntity.status(200).body(new response<>(true, "Carrito obtenido exitosamente", miCarrito));
+        return ResponseEntity.status(200).body(new Response<>(true, "Carrito obtenido exitosamente", miCarrito));
     }
 
     @PostMapping("/agregar")
-    public ResponseEntity<response<carrito>> agregarAlCarrito(@RequestBody carrito nuevoCarrito) {
-        carrito itemAgregado = carritoServices.AgregarAlCarrito(nuevoCarrito);
+    public ResponseEntity<Response<Carrito>> agregarAlCarrito(@RequestBody Carrito nuevoCarrito) {
+        Carrito itemAgregado = carritoServices.AgregarAlCarrito(nuevoCarrito);
         
         if (itemAgregado == null) 
-            return ResponseEntity.status(400).body(new response<>(false, "Error al agregar al carrito. Verifica el stock.", null));
+            return ResponseEntity.status(400).body(new Response<>(false, "Error al agregar al carrito. Verifica el stock.", null));
         
-        return ResponseEntity.status(201).body(new response<>(true, "Producto agregado al carrito", itemAgregado));
+        return ResponseEntity.status(201).body(new Response<>(true, "Producto agregado al carrito", itemAgregado));
     }
 
     @PatchMapping("/actualizar/{idCarritoItem}")
-    public ResponseEntity<response<carrito>> actualizarCantidad(@PathVariable Long idCarritoItem, @RequestParam Integer cantidad) {
-        carrito itemActualizado = carritoServices.ActualizarCantidad(idCarritoItem, cantidad);
+    public ResponseEntity<Response<Carrito>> actualizarCantidad(@PathVariable Long idCarritoItem, @RequestParam Integer cantidad) {
+        Carrito itemActualizado = carritoServices.ActualizarCantidad(idCarritoItem, cantidad);
         
         if (itemActualizado == null) 
-            return ResponseEntity.status(400).body(new response<>(false, "No se pudo actualizar la cantidad. Verifica el stock o el ítem.", null));
+            return ResponseEntity.status(400).body(new Response<>(false, "No se pudo actualizar la cantidad. Verifica el stock o el ítem.", null));
         
-        return ResponseEntity.status(200).body(new response<>(true, "Cantidad actualizada", itemActualizado));
+        return ResponseEntity.status(200).body(new Response<>(true, "Cantidad actualizada", itemActualizado));
     }
 
     @DeleteMapping("/eliminar/{idCarritoItem}")
-    public ResponseEntity<response<String>> eliminarDelCarrito(@PathVariable Long idCarritoItem) {
+    public ResponseEntity<Response<String>> eliminarDelCarrito(@PathVariable Long idCarritoItem) {
         boolean eliminado = carritoServices.EliminarDelCarrito(idCarritoItem);
         
         if (!eliminado) 
-            return ResponseEntity.status(404).body(new response<>(false, "No se encontró el ítem en el carrito", null));
+            return ResponseEntity.status(404).body(new Response<>(false, "No se encontró el ítem en el carrito", null));
         
-        return ResponseEntity.status(200).body(new response<>(true, "Producto eliminado del carrito", null));
+        return ResponseEntity.status(200).body(new Response<>(true, "Producto eliminado del carrito", null));
     }
 
     @DeleteMapping("/vaciar/{idUsuario}")
-    public ResponseEntity<response<String>> vaciarCarrito(@PathVariable Long idUsuario) {
+    public ResponseEntity<Response<String>> vaciarCarrito(@PathVariable Long idUsuario) {
         boolean vaciado = carritoServices.VaciarCarrito(idUsuario);
         
         if (!vaciado) 
-            return ResponseEntity.status(404).body(new response<>(false, "El carrito ya está vacío o no existe", null));
+            return ResponseEntity.status(404).body(new Response<>(false, "El carrito ya está vacío o no existe", null));
         
-        return ResponseEntity.status(200).body(new response<>(true, "Carrito vaciado exitosamente", null));
+        return ResponseEntity.status(200).body(new Response<>(true, "Carrito vaciado exitosamente", null));
     }
 }

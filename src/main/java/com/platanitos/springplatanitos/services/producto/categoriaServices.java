@@ -1,18 +1,17 @@
-package com.platanitos.springplatanitos.services;
+package com.platanitos.springplatanitos.services.producto;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.platanitos.springplatanitos.models.categoria;
-
-import com.platanitos.springplatanitos.repository.categoriaRepository;
+import com.platanitos.springplatanitos.models.Categoria;
+import com.platanitos.springplatanitos.repository.producto.CategoriaRepository;
 
 @Service
 public class categoriaServices {
 
     @Autowired
-    private categoriaRepository categoriaRepository;
+    private CategoriaRepository categoriaRepository;
 
     //Metodo para contar productos por categoria
     public Integer ContarProductosPorCategoria(String categoria){
@@ -20,7 +19,7 @@ public class categoriaServices {
     }
 
     //Metodo para mostrar todas las categorias
-    public List<categoria> TodasLasCategorias(){
+    public List<Categoria> TodasLasCategorias(){
         return categoriaRepository.findAll();
     }
 }

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "talla")
-public class talla {
+public class Talla {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -12,22 +12,12 @@ public class talla {
     @Column(nullable = false)
     private String talla;
 
-    public talla() { }
+    public Talla() { }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }   
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTalla() {
-        return talla;
-    }
-
-    public void setTalla(String talla) {
-        this.talla = talla;
-    }
+    public String getTalla() { return talla; }
+    public void setTalla(String talla) { this.talla = talla; }
 
 }

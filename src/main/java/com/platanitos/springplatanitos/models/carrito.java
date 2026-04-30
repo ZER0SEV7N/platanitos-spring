@@ -1,60 +1,48 @@
 package com.platanitos.springplatanitos.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "carrito")
-public class carrito {
+public class Carrito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "idproducto", nullable = false)
-    private Long idProducto;
-
+    @ManyToOne
     @Column(name = "idusuario", nullable = false)
-    private Long idUsuario;
+    private Usuario usuario;
 
-    @Column(nullable = false, columnDefinition = "integer default 1")
-    private Integer cantidad;
+    @Column(nullable = false)
+    private LocalDateTime fecha = LocalDateTime.now();
 
-    public carrito() { }
+    @Column(nullable = false)
+    private Double total = 0.0;
 
-    public Long getId() {
-        return id;
-    }
+    //Relacion uno a muchos con carrito detalle
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true) 
+    @JsonManagedReference
+    private List<CarritoDetalle> detalles = new ArrayList<>();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Carrito() { }
 
-    public Long getIdProducto() { 
-        return idProducto; 
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setIdProducto(Long idProducto) {
-        this.idProducto = idProducto;
-    }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
-    }
+    public Double getTotal() { return total; }
+    public void setTotal(Double total) { this.total = total; }
 
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
+    public List<CarritoDetalle> getDetalles() { return detalles; }
+    public void setDetalles(List<CarritoDetalle> detalles) { this.detalles = detalles; }
 }

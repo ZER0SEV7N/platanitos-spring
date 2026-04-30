@@ -1,19 +1,17 @@
-package com.platanitos.springplatanitos.services;
+package com.platanitos.springplatanitos.services.auth;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.nio.charset.StandardCharsets;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class jwtservices {
+public class JwtServices {
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -56,7 +54,7 @@ public class jwtservices {
         return claimsResolver.apply(claims);
     }
 
-
+    //Método para extraer todos los reclamos del token
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
@@ -66,6 +64,7 @@ public class jwtservices {
                 .getBody();
     }
 
+    //Método para obtener la clave de firma a partir del secreto
     private Key getSignInKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

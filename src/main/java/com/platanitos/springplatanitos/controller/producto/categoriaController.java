@@ -1,4 +1,4 @@
-package com.platanitos.springplatanitos.controller;
+package com.platanitos.springplatanitos.controller.producto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import com.platanitos.springplatanitos.models.categoria;
+import com.platanitos.springplatanitos.models.Categoria;
 
-import com.platanitos.springplatanitos.models.payload.response;
-import com.platanitos.springplatanitos.services.categoriaServices;
+import com.platanitos.springplatanitos.models.payload.Response;
+import com.platanitos.springplatanitos.services.producto.categoriaServices;
 
 @RestController
 @RequestMapping("/api/categorias")
@@ -21,19 +21,19 @@ public class categoriaController {
 
     //Metodo para contar productos por categoria
     @GetMapping("/total/{categoria}")
-    public ResponseEntity<response<Integer>> ContarProductosPorCategoria(@PathVariable String categoria){
+    public ResponseEntity<Response<Integer>> ContarProductosPorCategoria(@PathVariable String categoria){
         Integer count = categoriaServices.ContarProductosPorCategoria(categoria);
 
         if(count == null) 
-            return ResponseEntity.status(404).body(new response<>(false, "Categoría no encontrada", null));
+            return ResponseEntity.status(404).body(new Response<>(false, "Categoría no encontrada", null));
         
-        return ResponseEntity.status(200).body(new response<>(true, "Cantidad de productos en la categoría: " + categoria, count));
+        return ResponseEntity.status(200).body(new Response<>(true, "Cantidad de productos en la categoría: " + categoria, count));
     }
 
     //Metodo para mostrar todas las categorias
     @GetMapping
-    public ResponseEntity<response<List<categoria>>> TodasLasCategorias(){
-        return ResponseEntity.status(200).body(new response<>(true, "Categorías encontradas", categoriaServices.TodasLasCategorias()));
+    public ResponseEntity<Response<List<Categoria>>> TodasLasCategorias(){
+        return ResponseEntity.status(200).body(new Response<>(true, "Categorías encontradas", categoriaServices.TodasLasCategorias()));
     }
 
 }
