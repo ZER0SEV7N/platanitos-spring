@@ -4,17 +4,44 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.platanitos.springplatanitos.models.Color;
+import com.platanitos.springplatanitos.models.Producto;
 import com.platanitos.springplatanitos.models.ProductoVariante;
-import com.platanitos.springplatanitos.repository.producto.ProductoVarianteRepository;
+import com.platanitos.springplatanitos.models.Talla;
+import com.platanitos.springplatanitos.models.dto.VarianteResponseDTO;
+import com.platanitos.springplatanitos.repository.producto.*;
 
 @Service
 public class ProductoVarianteServices {
 
     @Autowired
     private ProductoVarianteRepository productoVarianteRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
+    @Autowired
+    private ColorRepository colorRepository;
+    @Autowired
+    private TallaRepository tallaRepository;
 
     //Metodo para crear una nueva variante de producto
     public ProductoVariante crearVariante(ProductoVariante nuevaVariante){
+        if (nuevaVariante.getProducto() == null || nuevaVariante.getColor() == null || nuevaVariante.getTalla() == null) {
+            return null; 
+        }
+
+        Producto productoDB = productoRepository.findById(nuevaVariante.getProducto().getId()).orElse(null);
+        Color colorDB = colorRepository.findById(nuevaVariante.getColor().getId()).orElse(null);
+        Talla tallaDB = tallaRepository.findById(nuevaVariante.getTalla().getId()).orElse(null);
+
+        if (productoDB == null || colorDB == null || tallaDB == null) {
+            return null; 
+        }
+
+        nuevaVariante.setProducto(productoDB);
+        nuevaVariante.setColor(colorDB);
+        nuevaVariante.setTalla(tallaDB);
+
         return productoVarianteRepository.save(nuevaVariante);
     }
     
@@ -64,6 +91,31 @@ public class ProductoVarianteServices {
     //Metodo para contar el numero de variantes que existen con una talla y color especificos
     public Integer contarVariantesPorTallaYColor(String talla, String color, Long idProducto){
         return productoVarianteRepository.countByTalla_TallaAndColor_ColorAndProductoId(talla, color, idProducto);
+    }
+
+    // Método para convertir la entidad Variante a DTO
+    public VarianteResponseDTO convertirDTO(ProductoVariante variante) {
+        VarianteResponseDTO dto = new VarianteResponseDTO();
+        
+        dto.setId(variante.getId());
+        dto.setStock(variante.getStock());
+        dto.setPrecio(variante.getPrecio());
+        dto.setEstado(variante.getEstado());
+
+        if (variante.getProducto() != null) {
+            dto.setIdProducto(variante.getProducto().getId());
+            dto.setNombreProducto(variante.getProducto().getProducto());
+        }
+        
+        if (variante.getColor() != null) {
+            dto.setColor(variante.getColor().getColor());
+        }
+        
+        if (variante.getTalla() != null) {
+            dto.setTalla(variante.getTalla().getTalla());
+        }
+
+        return dto;
     }
 
 }

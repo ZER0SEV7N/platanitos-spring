@@ -8,7 +8,7 @@ import com.platanitos.springplatanitos.models.Categoria;
 import com.platanitos.springplatanitos.repository.producto.CategoriaRepository;
 
 @Service
-public class categoriaServices {
+public class CategoriaServices {
 
     @Autowired
     private CategoriaRepository categoriaRepository;

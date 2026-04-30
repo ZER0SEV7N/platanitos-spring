@@ -48,4 +48,7 @@ public class Producto {
     public Categoria getCategoria() { return categoria; }
     public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 
+    public java.util.List<ProductoVariante> getVariantes() { return variantes; }
+    public void setVariantes(java.util.List<ProductoVariante> variantes) { this.variantes = variantes; }
+
 }

@@ -1,9 +1,12 @@
 package com.platanitos.springplatanitos.services.carrito;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.platanitos.springplatanitos.models.*;
+import com.platanitos.springplatanitos.models.dto.CarritoResponseDTO;
 import com.platanitos.springplatanitos.repository.auth.UsuarioRepository;
 import com.platanitos.springplatanitos.repository.carrito.CarritoDetalleRepository;
 import com.platanitos.springplatanitos.repository.carrito.CarritoRepository;
@@ -167,5 +170,43 @@ public class CarritoServices {
                             .sum();
         carrito.setTotal(total);
         carritoRepository.save(carrito);
+    }
+
+    //Método para convertir la entidad Carrito a un DTO aplanado
+    public CarritoResponseDTO convertirDTO(Carrito carrito) {
+        CarritoResponseDTO dto = new CarritoResponseDTO();
+        dto.setIdCarrito(carrito.getId());
+        dto.setTotal(carrito.getTotal());
+
+        if (carrito.getDetalles() != null) {
+            List<CarritoResponseDTO.DetalleCarritoDTO> detallesDto = carrito.getDetalles().stream()
+                .map(item -> {
+                    CarritoResponseDTO.DetalleCarritoDTO itemDto = new CarritoResponseDTO.DetalleCarritoDTO();
+                    itemDto.setIdCarritoDetalle(item.getId());
+                    itemDto.setCantidad(item.getCantidad());
+                    itemDto.setSubtotal(item.getSubtotal());
+
+                    if (item.getProductoVariante() != null) {
+                        itemDto.setIdVariante(item.getProductoVariante().getId());
+                        
+                        if (item.getProductoVariante().getProducto() != null) 
+                            itemDto.setProducto(item.getProductoVariante().getProducto().getProducto());
+                            
+                        if (item.getProductoVariante().getColor() != null) 
+                            itemDto.setColor(item.getProductoVariante().getColor().getColor());
+                            
+                        if (item.getProductoVariante().getTalla() != null) 
+                            itemDto.setTalla(item.getProductoVariante().getTalla().getTalla());
+                    }
+                    
+                    return itemDto;
+                }).collect(Collectors.toList());
+            
+            dto.setDetalles(detallesDto);
+        } else {
+            dto.setDetalles(new java.util.ArrayList<>());
+        }
+
+        return dto;
     }
 }

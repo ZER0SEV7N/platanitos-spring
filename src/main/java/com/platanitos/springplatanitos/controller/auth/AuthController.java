@@ -31,6 +31,8 @@ public class AuthController {
         if (usuarioRegistrado == null) 
             return ResponseEntity.status(400).body(new Response<>(false, "El email ya está registrado", null));
 
+        //Ocultar datos sensibles en la respuesta
+        usuarioRegistrado.setId(null);
         usuarioRegistrado.setContraseña(null);
 
         return ResponseEntity.status(201).body(new Response<>(true, "Usuario registrado exitosamente", usuarioRegistrado));
@@ -45,7 +47,8 @@ public class AuthController {
         if (usuarioAutenticado == null) 
             return ResponseEntity.status(401).body(new Response<>(false, "Email o contraseña incorrectos", null));
 
-        usuarioAutenticado.setContraseña(null); // Ocultar contraseña en la respuesta
+        usuarioAutenticado.setId(null); //Ocultar ID en la respuesta
+        usuarioAutenticado.setContraseña(null); //Ocultar contraseña en la respuesta
 
         //Generar token JWT
         String token = jwtServices.generarToken(usuarioAutenticado.getEmail());

@@ -1,21 +1,58 @@
+POST: http://localhost:8080/api/auth/registrar
 {
-    
+  "nombre": "Daniel",
+  "apellido": "Singer",
+  "email": "danielsinger07@gmail.com",
+  "contraseña": "12345678"
 }
 
-
+POST: http://localhost:8080/api/auth/login
 {
-  "producto": "Sandalias Crocs Zuecos Mujer Baya",
-  "descripcion": "Sumérgete en la elegancia y comodidad con los Zuecos Mujer Baya Platform Clog W de Crocs.",
-    "precio": "188.10",
-    "stock": 60,
-    "color": {
-      "id": 2
+  "email": "danielsinger07@gmail.com",
+  "contraseña": "12345678"
+}
+
+POST: http://localhost:8080/api/productos
+{
+  "producto": "Botas de Montaña Trek Explorer",
+  "descripcion": "Botas impermeables de alta tracción, ideales para senderismo y terrenos rocosos.",
+  "categoria": {
+    "id": 1
+  }
+}
+
+POST: http://localhost:8080/api/producto-variantes
+{
+  "stock": 80,
+  "precio": 120.99,
+  "estado": true,
+  "producto": {
+    "id": 4
+  },
+  "color": {
+    "id": 5
+  },
+  "talla": {
+    "id": 6
+  }
+}
+
+Post: http://localhost:8080/api/carrito/agregar
+{
+  "idUsuario": 1,
+  "items": [
+    {
+      "idVariante": 1,
+      "cantidad": 2
     },
-    "talla": {
-        "id": 3
-    },
-    "categoria": {
-        "id": 1
-    },
-    "estado": true
+    {
+      "idVariante": 4,
+      "cantidad": 1
+    }
+  ]
+}
+
+Patch: http://localhost:8080/api/carrito/actualizar/1 <---DetalleCarrito
+{
+  "cantidad": 3
 }

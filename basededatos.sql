@@ -100,6 +100,22 @@ insert categoria values
 (null, 'accesorios');
 
 -- Insercion de productos
-insert producto values
-(null, "zapatillas urbanas hombre", "la comodidad se une a la forma. la elegante parte superior de malla te mantiene fresco, mientras que la unidad max air en el talón aporta elasticidad a tus pasos.", 399.00, 50, 2, 5, 1, true ),
-(null, "polo training hombre boxed sports", "sumérgete en la energía y el estilo con nuestro polo training hombre boxed sports updated de under armour.", 59.90, 50, 5, 2, 2, true);
+insert producto values 
+(null, 'Zapatillas Urbanas Street', 'Zapatillas de lona vulcanizada, ideales para caminar por la ciudad.', 1, true),
+(null, 'Polo Compression Pro', 'Polo ajustado con tecnología de secado rápido para entrenamiento.', 5, true),
+(null, 'Casaca Cortavientos Runner', 'Diseño ultraligero y resistente al agua, perfecto para el clima cambiante.', 2, true);
+
+-- Insercion de variantes de productos
+insert producto_variante values
+(null, 1, 5, 3, 50, 199.90, true),  -- Negras talla M
+(null, 1, 5, 4, 30, 199.90, true),  -- Negras talla L
+(null, 1, 2, 3, 15, 199.90, true),  -- Azules talla M
+
+-- Variantes para Polo Compression Pro (Producto 2)
+(null, 2, 5, 2, 100, 79.90, true),  -- Negro talla S
+(null, 2, 5, 3, 80, 79.90, true),   -- Negro talla M
+(null, 2, 1, 4, 25, 79.90, true),   -- Rojo talla L
+
+-- Variantes para Casaca Cortavientos (Producto 3)
+(null, 3, 2, 4, 10, 250.00, true),  -- Azul talla L
+(null, 3, 5, 4, 5, 250.00, true);   -- Negra talla L

@@ -1,5 +1,7 @@
 package com.platanitos.springplatanitos.controller.carrito;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.platanitos.springplatanitos.models.Carrito;
 import com.platanitos.springplatanitos.models.CarritoDetalle;
 import com.platanitos.springplatanitos.models.dto.CarritoDTO;
+import com.platanitos.springplatanitos.models.dto.CarritoResponseDTO;
 import com.platanitos.springplatanitos.models.payload.Response;
 import com.platanitos.springplatanitos.services.carrito.CarritoServices;
 
@@ -28,20 +31,22 @@ public class CarritoController {
 
     //Obtener el carrito activo de un usuario
     //Get: /api/carrito/{idUsuario}
-    @GetMapping("/{idUsuario")
-    public ResponseEntity<Response<Carrito>> obtenerCarrito(@PathVariable Long idUsuario){
+    @GetMapping("/{idUsuario}")
+    public ResponseEntity<Response<CarritoResponseDTO>> obtenerCarrito(@PathVariable Long idUsuario){
         Carrito carrito = carritoServices.obtenerCarritoPorUsuario(idUsuario);
 
         if(carrito == null || carrito.getDetalles().isEmpty())
             return ResponseEntity.status(404).body(new Response<>(false, "Carrito vacío", null));
 
-        return ResponseEntity.status(200).body(new Response<>(true, "Carrito obtenido", carrito));
+        CarritoResponseDTO dto = carritoServices.convertirDTO(carrito);
+
+        return ResponseEntity.status(200).body(new Response<>(true, "Carrito obtenido", dto));
     }
      
     //Agregar un producto al carrito
     //Post: /api/carrito/agregar
     @PostMapping("/agregar")
-    public ResponseEntity<Response<Carrito>> agregarAlCarrito(@RequestBody CarritoDTO carritoDto){
+    public ResponseEntity<Response<CarritoResponseDTO>> agregarAlCarrito(@RequestBody CarritoDTO carritoDto){
         try{
             Long idUsuario = carritoDto.getIdUsuario();
             boolean stockError = false;
@@ -53,11 +58,12 @@ public class CarritoController {
             }
 
             Carrito carritoActualizado = carritoServices.obtenerCarritoPorUsuario(idUsuario);
+            CarritoResponseDTO dto = carritoServices.convertirDTO(carritoActualizado);
 
             if(stockError)
-                return ResponseEntity.status(207).body(new Response<>(true, "Producto agregado pero con limitaciones de stock", carritoActualizado));
+                return ResponseEntity.status(207).body(new Response<>(true, "Producto agregado pero con limitaciones de stock", dto ));
             
-            return ResponseEntity.status(200).body(new Response<>(true, "Producto agregado al carrito", carritoActualizado));
+            return ResponseEntity.status(200).body(new Response<>(true, "Producto agregado al carrito", dto));
         } catch(Exception e){
             return ResponseEntity.status(500).body(new Response<>(false, "Error al agregar al carrito: " + e.getMessage(), null));
         }
@@ -66,19 +72,25 @@ public class CarritoController {
     //Actualizar la cantidad de un producto en el carrito
     //Patch: /api/carrito/actualizar/{idCarritoDetalle}
     @PatchMapping("/actualizar/{idCarritoDetalle}")
-    public ResponseEntity<Response<CarritoDetalle>> actualizarCarrito(@PathVariable Long idCarritoDetalle, @RequestParam Integer cantidad){
-        CarritoDetalle detalleActualizado = carritoServices.actualizarCantidad(idCarritoDetalle, cantidad);
+    public ResponseEntity<Response<CarritoResponseDTO>> actualizarCarrito(@PathVariable Long idCarritoDetalle, 
+        @RequestBody Map<String, Integer> requestBody){
+        Integer nuevaCantidad = requestBody.get("cantidad");
 
-        if(detalleActualizado == null)
-            return ResponseEntity.status(400).body(new Response<>(false, "No se pudo actualizar el carrito (cantidad inválida o stock insuficiente)", null));
+        if (nuevaCantidad == null || nuevaCantidad <= 0) {
+            return ResponseEntity.status(400).body(new Response<>(false, "La cantidad debe ser mayor a cero", null));
+        }
 
-        return ResponseEntity.status(200).body(new Response<>(true, "Carrito actualizado", detalleActualizado));
+        CarritoDetalle carritoActualizado = carritoServices.actualizarCantidad(idCarritoDetalle, nuevaCantidad);
+
+        //Convertir en dto
+        CarritoResponseDTO dto = carritoServices.convertirDTO(carritoActualizado.getCarrito());
+        return ResponseEntity.status(200).body(new Response<>(true, "Cantidad actualizada", dto));
     }
 
     //Eliminar un producto del carrito
     //Delete: /api/carrito/eliminar/{idCarritoDetalle}
     @DeleteMapping("/eliminar/{idCarritoDetalle}")
-    public ResponseEntity<Response<String>> eliminarDelCarrito(@PathVariable Long idCarritoDetalle){
+    public ResponseEntity<Response<CarritoResponseDTO>> eliminarDelCarrito(@PathVariable Long idCarritoDetalle){
         boolean eliminado = carritoServices.eliminarDelCarrito(idCarritoDetalle);
 
         if(!eliminado)
@@ -91,7 +103,7 @@ public class CarritoController {
     //Vaciar el carrito de un usuario
     //Delete: /api/carrito/vaciar/{idUsuario}
     @DeleteMapping("/vaciar/{idUsuario}")
-    public ResponseEntity<Response<String>> vaciarCarrito(@PathVariable Long idUsuario){
+    public ResponseEntity<Response<CarritoResponseDTO>> vaciarCarrito(@PathVariable Long idUsuario){
         boolean vaciado = carritoServices.vaciarCarrito(idUsuario);
 
         if(!vaciado)

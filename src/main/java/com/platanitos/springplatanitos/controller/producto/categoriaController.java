@@ -10,14 +10,14 @@ import java.util.List;
 import com.platanitos.springplatanitos.models.Categoria;
 
 import com.platanitos.springplatanitos.models.payload.Response;
-import com.platanitos.springplatanitos.services.producto.categoriaServices;
+import com.platanitos.springplatanitos.services.producto.CategoriaServices;
 
 @RestController
 @RequestMapping("/api/categorias")
-public class categoriaController {
+public class CategoriaController {
 
     @Autowired
-    private categoriaServices categoriaServices;
+    private CategoriaServices categoriaServices;
 
     //Metodo para contar productos por categoria
     @GetMapping("/total/{categoria}")

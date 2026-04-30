@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.platanitos.springplatanitos.models.ProductoVariante;
+import com.platanitos.springplatanitos.models.dto.VarianteResponseDTO;
 import com.platanitos.springplatanitos.models.payload.Response;
 import com.platanitos.springplatanitos.services.producto.ProductoVarianteServices;
 
@@ -21,9 +22,11 @@ public class ProductoVarianteController {
     //Metodo para traer todas las variantes de un producto que esten activas
     //Api: /api/producto-variantes/producto/{idProducto}
     @GetMapping("/producto/{idProducto}")
-    public ResponseEntity<Response<List<ProductoVariante>>> obtenerVariantesPorProducto(@PathVariable Long idProducto){
+    public ResponseEntity<Response<List<VarianteResponseDTO>>> obtenerVariantesPorProducto(@PathVariable Long idProducto){
         try{
-            List<ProductoVariante> variantes = productoVariantesService.obtenerVariantesPorProductoId(idProducto);
+            List<VarianteResponseDTO> variantes = productoVariantesService.obtenerVariantesPorProductoId(idProducto).stream()
+                    .map(productoVariantesService::convertirDTO)
+                    .collect(java.util.stream.Collectors.toList());
             //Si no se encuentran variantes, retornar un mensaje adecuado
             if(variantes.isEmpty()) 
                 return ResponseEntity.status(404).body(new Response<>(false, "No se encontraron variantes para el producto con id: " + idProducto, null));
@@ -37,9 +40,11 @@ public class ProductoVarianteController {
     //Metodo para traer todas las variantes que esten activas
     //Api: /api/producto-variantes/todos
     @GetMapping("/todos")
-    public ResponseEntity<Response<List<ProductoVariante>>> obtenerTodasLasVariantes(){
+    public ResponseEntity<Response<List<VarianteResponseDTO>>> obtenerTodasLasVariantes(){
         try{
-            List<ProductoVariante> variantes = productoVariantesService.todasLasVariantes();
+            List<VarianteResponseDTO> variantes = productoVariantesService.todasLasVariantes().stream()
+                    .map(productoVariantesService::convertirDTO)
+                    .collect(java.util.stream.Collectors.toList());
 
             //Si no se encuentran variantes, retornar un mensaje adecuado
             if(variantes.isEmpty()) 
@@ -54,15 +59,16 @@ public class ProductoVarianteController {
     //Metodo para traer una variante por su id
     //Api: /api/producto-variantes/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Response<ProductoVariante>> obtenerVariantePorId(@PathVariable Long id){
+    public ResponseEntity<Response<VarianteResponseDTO>> obtenerVariantePorId(@PathVariable Long id){
         try{
             ProductoVariante variante = productoVariantesService.obtenerVariantePorId(id);
+            VarianteResponseDTO varianteDTO = productoVariantesService.convertirDTO(variante);
 
             //Si no se encuentra la variante, retornar un mensaje adecuado
-            if(variante == null)
+            if(varianteDTO == null)
                 return ResponseEntity.status(404).body(new Response<>(false, "Variante no encontrada con id: " + id, null));
 
-            return ResponseEntity.status(200).body(new Response<>(true, "Variante encontrada con id: " + id, variante));
+            return ResponseEntity.status(200).body(new Response<>(true, "Variante encontrada con id: " + id, varianteDTO));
         }
         catch (Exception e){
             return ResponseEntity.status(500).body(new Response<>(false, "Ocurrio un error al obtener la variante con id: " + id, null));
@@ -84,14 +90,16 @@ public class ProductoVarianteController {
     //Metodo para crear una nueva variante de producto
     //Api: /api/producto-variantes - POST
     @PostMapping
-    public ResponseEntity<Response<ProductoVariante>> crearVariante(@RequestBody ProductoVariante nuevaVariante){
+    public ResponseEntity<Response<VarianteResponseDTO>> crearVariante(@RequestBody ProductoVariante nuevaVariante){
         try{
             ProductoVariante variante = productoVariantesService.crearVariante(nuevaVariante);
             //Si no se pudo crear la variante, retornar un mensaje adecuado
             if(variante == null)
                 return ResponseEntity.status(400).body(new Response<>(false, "Error al crear la variante", null));
 
-            return ResponseEntity.status(201).body(new Response<>(true, "Variante creada exitosamente", variante));
+            VarianteResponseDTO varianteDTO = productoVariantesService.convertirDTO(variante);
+
+            return ResponseEntity.status(201).body(new Response<>(true, "Variante creada exitosamente", varianteDTO));
         }catch (Exception e){
             return ResponseEntity.status(500).body(new Response<>(false, "Ocurrio un error al crear la variante", null));
         }
@@ -100,7 +108,7 @@ public class ProductoVarianteController {
     //Metodo para actualizar una variante de producto
     //Api: /api/producto-variantes/actualizar/{id} - PATCH
     @PatchMapping("/actualizar/{id}")
-    public ResponseEntity<Response<ProductoVariante>> actualizarVariante(@PathVariable Long id, @RequestBody ProductoVariante varianteActualizada){
+    public ResponseEntity<Response<VarianteResponseDTO>> actualizarVariante(@PathVariable Long id, @RequestBody ProductoVariante varianteActualizada){
         try {
             ProductoVariante variante = productoVariantesService.actualizarVariante(id, varianteActualizada);
 
@@ -108,7 +116,8 @@ public class ProductoVarianteController {
             if(variante == null) 
                 return ResponseEntity.status(404).body(new Response<>(false, "Variante no encontrada con id: " + id, null));
 
-            return ResponseEntity.status(200).body(new Response<>(true, "Variante actualizada con id: " + id, variante));
+            VarianteResponseDTO varianteDTO = productoVariantesService.convertirDTO(variante);
+            return ResponseEntity.status(200).body(new Response<>(true, "Variante actualizada con id: " + id, varianteDTO));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new Response<>(false, "Ocurrio un error al actualizar la variante con id: " + id, null));
         }
@@ -117,7 +126,7 @@ public class ProductoVarianteController {
     //Metodo para eliminar una variante de producto (softDelete)
     //Api: /api/producto-variantes/estado/{id} - PATCH
     @PatchMapping("/estado/{id}")
-    public ResponseEntity<Response<ProductoVariante>> eliminarVariante(@PathVariable Long id){
+    public ResponseEntity<Response<VarianteResponseDTO>> eliminarVariante(@PathVariable Long id){
         try {
             ProductoVariante variante = productoVariantesService.cambiarEstado(id);
 
@@ -126,7 +135,8 @@ public class ProductoVarianteController {
                 return ResponseEntity.status(404).body(new Response<>(false, "Variante no encontrada con id: " + id, null));
 
             String mensaje = variante.getEstado() ? "Variante activada exitosamente" : "Variante desactivada exitosamente";        
-            return ResponseEntity.status(200).body(new Response<>(true, mensaje, variante));
+            VarianteResponseDTO varianteDTO = productoVariantesService.convertirDTO(variante);
+            return ResponseEntity.status(200).body(new Response<>(true, mensaje, varianteDTO));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new Response<>(false, "Ocurrio un error al cambiar el estado de la variante con id: " + id, null));
         }

@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.platanitos.springplatanitos.repository.producto.ProductoRepository;
 import com.platanitos.springplatanitos.models.*;
+import com.platanitos.springplatanitos.models.dto.ProductoResponseDTO;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoServices {
@@ -58,6 +61,39 @@ public class ProductoServices {
     //Metodo para filtrar productos por categoria
     public List<Producto> filtrarProductosPorCategoria(String categoria){
         return productoRepository.findByCategoria_Categoria(categoria);
+    }
+
+    //Metodo para convertir la entidad Producto a un DTO
+    public ProductoResponseDTO convertirDTO(Producto producto){
+
+        ProductoResponseDTO dto = new ProductoResponseDTO();
+        dto.setId(producto.getId());
+        dto.setProducto(producto.getProducto());
+        dto.setDescripcion(producto.getDescripcion());
+        
+        //Obtener la categoria mientras no este vacio
+        if (producto.getCategoria() != null) 
+            dto.setCategoria(producto.getCategoria().getCategoria());
+
+        if (producto.getVariantes() != null) {
+            List<ProductoResponseDTO.VarianteDTO> variantesDto = producto.getVariantes().stream()
+                .filter(v -> v.getEstado()) 
+                .map(v -> {
+                    ProductoResponseDTO.VarianteDTO vDto = new ProductoResponseDTO.VarianteDTO();
+                    vDto.setIdVariante(v.getId());
+                    vDto.setPrecio(v.getPrecio());
+                    vDto.setStock(v.getStock());
+                    
+                    if (v.getColor() != null) vDto.setColor(v.getColor().getColor());
+                    if (v.getTalla() != null) vDto.setTalla(v.getTalla().getTalla());
+                    
+                    return vDto;
+                }).collect(Collectors.toList());
+            
+            dto.setVariantes(variantesDto);
+        }
+        
+        return dto;
     }
 
 }

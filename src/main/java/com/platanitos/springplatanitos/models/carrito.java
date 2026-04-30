@@ -3,6 +3,7 @@ package com.platanitos.springplatanitos.models;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -15,7 +16,7 @@ public class Carrito {
     private Long id;
 
     @ManyToOne
-    @Column(name = "idusuario", nullable = false)
+    @JoinColumn(name = "idusuario", nullable = false)
     private Usuario usuario;
 
     @Column(nullable = false)
