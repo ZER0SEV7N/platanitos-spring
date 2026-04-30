@@ -1,4 +1,4 @@
-package com.platanitos.springplatanitos.controller;
+package com.platanitos.springplatanitos.controller.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,13 +8,13 @@ import com.platanitos.springplatanitos.models.Usuario;
 import com.platanitos.springplatanitos.models.payload.Response;
 import com.platanitos.springplatanitos.services.auth.JwtServices;
 import com.platanitos.springplatanitos.services.auth.UsuarioServices;
-
 import java.util.HashMap;
 import java.util.Map;
 
+//Controlador para gestionar la autenticación y registro de usuarios
 @RestController
 @RequestMapping("/api/auth")
-public class authController {
+public class AuthController {
 
     @Autowired
     private UsuarioServices usuarioServices;
@@ -23,6 +23,7 @@ public class authController {
     private JwtServices jwtServices;
 
     //Endpoint para registro de nuevo usuario
+    //Post: /api/auth/registrar
     @PostMapping("/registrar")
     public ResponseEntity<Response<Usuario>> registro(@RequestBody Usuario nuevoUsuario) {
         Usuario usuarioRegistrado = usuarioServices.Registrar(nuevoUsuario);
@@ -36,6 +37,7 @@ public class authController {
     }
 
     //Endpoint para login de usuario
+    //Post: /api/auth/login
     @PostMapping("/login")
     public ResponseEntity<Response<Map<String, Object>>> login(@RequestBody Usuario credenciales) {
         Usuario usuarioAutenticado = usuarioServices.IniciarSesion(credenciales.getEmail(), credenciales.getContraseña());
